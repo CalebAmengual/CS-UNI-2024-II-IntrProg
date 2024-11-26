@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include "employee.h"
 
 Employee::Employee(string name, TSal salary)
@@ -47,21 +48,45 @@ void ClassDemo(){
              a3(a2);
     a3.SetSalary(1500);
     cout << "------------------------\n";
-    Employee *pEmp = new Employee("Caleb", 700);
-    Employee *vEmpl = new Employee[3]{{"Nemo", 137}, {"Carlos", 73}, {"Maria", 7777}};
+    Employee* pEmp  = new Employee("Caleb", 700);
+    {
+        // https://en.cppreference.com/w/cpp/memory/unique_ptr
+        unique_ptr<Employee> obj1(new Employee("Ernesto", 900));
+        obj1->SetSalary(950);
+        obj1->SetName("Julio Ernesto");
+        // No me deja sacarle copias
+        // unique_ptr<Employee> copia = obj1;
+    }
+    unique_ptr<Employee> obj2(new Employee("Juan Pablo", 800));
+    obj2->SetSalary(990);
+    Employee *jp = obj2.release(); // Retorna el puntero y obj2 ya no lo administra.
+                                   // osea, apunta a nullptr
+    delete jp;
+
+    Employee* pTmp = pEmp;     // 2 referencias para este puntero
+    Employee* vEmpl = new Employee[3]{
+            {"Cristian", 700},  // Para el 1er objeto
+            {"Ana", 600},       // Para el 2do objeto
+            {"Juan", 800}       // Para el 3er objeto
+    };
+    
+    for(auto i = 0 ; i < 3 ; ++i)
+        cout << vEmpl[i] << endl;
+    delete [] vEmpl;
 
     cout << a1 << endl
          << a2 << endl
          << a3 << endl
-         << pEmp << endl
-         << vEmpl[0] << endl
-         << vEmpl[1] << endl
-         << vEmpl[2] << endl;
-
+         << pEmp << endl;
     cout << "========================\n";
+<<<<<<< HEAD
+    delete pEmp;  // Caleb
+=======
     delete pEmp;
     delete[] vEmpl;
+
+>>>>>>> 08a2f8edc8fc396dfb3e3ab403a2af15e5f7ff49
     pEmp = nullptr;
 
-    
+
 } // a1, a2, a3 estan saliendo de las {} donde fueron creados
